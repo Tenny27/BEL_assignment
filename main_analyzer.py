@@ -1,5 +1,4 @@
 # main_analyzer.py
-
 import psycopg2
 from psycopg2 import sql
 
@@ -23,6 +22,12 @@ class MainAnalyzer:
 
     def insert_record(self, user_id, timestamp, status):
         try:
+            # Get the current status from the database
+            current_status = self.get_current_status(user_id)
+
+            # Use AND gate to determine the final status
+            final_status = current_status and status
+
             with self.connection.cursor() as cursor:
                 cursor.execute(
                     sql.SQL("""
@@ -31,10 +36,22 @@ class MainAnalyzer:
                         ON CONFLICT (user_id) DO UPDATE
                         SET timestamp = %s, final_status = %s
                     """),
-                    (user_id, timestamp, status, timestamp, status)
+                    (user_id, timestamp, final_status, timestamp, final_status)
                 )
                 self.connection.commit()
         except Exception as e:
             print(f"Error updating record: {e}")
 
-    # Add other methods as needed
+    def get_current_status(self, user_id):
+        # Retrieve the current status from the database
+        with self.connection.cursor() as cursor:
+            cursor.execute(
+                sql.SQL("SELECT final_status FROM main_table WHERE user_id = %s"),
+                (user_id,)
+            )
+            result = cursor.fetchone()
+
+            if result:
+                return result[0]
+            else:
+                return None
