@@ -7,10 +7,10 @@ import threading
 def main():
     connection = MainAnalyzer.create_connection()
     main_analyzer = MainAnalyzer(connection)
-
+    user_id=int(input("Enter USER ID : "))
     # Run simulation programs concurrently using threads
-    thread_1 = threading.Thread(target=simulation_program_1, args=(main_analyzer,))
-    thread_2 = threading.Thread(target=simulation_program_2, args=(main_analyzer,))
+    thread_1 = threading.Thread(target=simulation_program_1, args=(main_analyzer,user_id))
+    thread_2 = threading.Thread(target=simulation_program_2, args=(main_analyzer,user_id))
 
     thread_1.start()
     thread_2.start()
