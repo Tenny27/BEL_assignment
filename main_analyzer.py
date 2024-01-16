@@ -22,10 +22,10 @@ class MainAnalyzer:
 
     def insert_record(self, user_id, timestamp, status):
         try:
-            # Get the current status from the database
+            
             current_status = self.get_current_status(user_id)
 
-            # Use AND gate to determine the final status
+            
             final_status = current_status and status
 
             with self.connection.cursor() as cursor:
@@ -43,7 +43,7 @@ class MainAnalyzer:
             print(f"Error updating record: {e}")
 
     def get_current_status(self, user_id):
-        # Retrieve the current status from the database
+        
         with self.connection.cursor() as cursor:
             cursor.execute(
                 sql.SQL("SELECT final_status FROM main_table WHERE user_id = %s"),
